@@ -1,6 +1,6 @@
 import { connectToDB } from '../config/database.js';
 import jwt from 'jsonwebtoken';
-import UserModel from '../models/UserModel.js';
+import UserModel from '../models/userModel.js';
 
 const createUser = async (req, res) => {
     try {

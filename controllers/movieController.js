@@ -2,7 +2,7 @@
 import csv from 'csvtojson';
 import MovieModel from '../models/MovieModel.js';
 import { connectToDB } from '../config/database.js';
-import UserModel from '../models/UserModel.js';
+import UserModel from '../models/userModel.js';
 const uploadMovies = async (req, res) => {
     try {
         connectToDB();
