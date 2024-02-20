@@ -2,6 +2,7 @@
 import csv from 'csvtojson';
 import MovieModel from '../models/MovieModel.js';
 import { connectToDB } from '../config/database.js';
+import UserModel from '../models/UserModel.js';
 const uploadMovies = async (req, res) => {
     try {
         connectToDB();
@@ -35,15 +36,40 @@ const uploadMovies = async (req, res) => {
 
 const getMovies = async (req, res) => {
     try {
+        const userId = req.params.userId; 
         connectToDB();
-        const movies = await MovieModel.find({});
+        const user = await UserModel.findById(userId);
+        if (!user) {
+            return res.status(404).send({ message: "User not found" });
+        }
+        const userAge = user.age;
+        let movies;
+        if (userAge < 18) {
+            movies = await MovieModel.find({ rating: { $ne: "R" } }); // Exclude movies with rating "R"
+        } else {
+            movies = await MovieModel.find(); // Get all movies for users 18 and older
+        }
         res.send(movies);
     } catch (error) {
-        res.send({ message: "File uploaded failed" });
+        console.error('Error while fetching movies for user:', error);
+        res.status(500).send({ message: "Failed to fetch movies" });
     }
 }
 
-export { uploadMovies, getMovies };
+const getMoviesByTitle = async (req, res) => {
+    try {
+        connectToDB();
+        const title = req.params.title; 
+        const movies = await MovieModel.find({ title: { $regex: title, $options: 'i' } });
+        res.send(movies);
+    } catch (error) {
+        res.send({ message: "Failed to fetch movies by title" });
+    }
+}
+
+export { uploadMovies, getMovies, getMoviesByTitle };
+
+
 
 
 

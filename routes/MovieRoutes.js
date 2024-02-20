@@ -3,10 +3,9 @@ const movie = Express();
 import multer from 'multer';
 import path from 'path';
 import bodyParser from 'body-parser';
-import { model } from 'mongoose'
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { uploadMovies, getMovies } from '../controllers/movieController.js';
+import { uploadMovies, getMovies, getMoviesByTitle } from '../controllers/movieController.js';
 
 // __filename and __dirname are not available in ES6 modules, so we have to use the following workaround
 const __filename = fileURLToPath(import.meta.url);
@@ -27,7 +26,8 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage })
 
 movie.post('/uploadMovies', upload.single('file'), uploadMovies);
-movie.get('/movies', getMovies);
+movie.get('/movies/:userId', getMovies);
+movie.get("/:title",getMoviesByTitle);
 
 
 export default movie;
