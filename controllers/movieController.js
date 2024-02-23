@@ -47,7 +47,23 @@ const getMovies = async (req, res) => {
         if (userAge < 18) {
             movies = await MovieModel.find({ rating: { $ne: "R" } }); // Exclude movies with rating "R"
         } else {
-            movies = await MovieModel.find(); // Get all movies for users 18 and older
+            // sort by date_added which is of  format of septmber 14 , 2021
+            movies = await MovieModel.aggregate([
+                {
+                  $match: {
+                    date_added: { $ne: "" } 
+                  }
+                },
+                {
+                  $addFields: {
+                    parsedDate: { $dateFromString: { dateString: "$date_added" } }
+                  }
+                },
+                {
+                  $sort: { parsedDate: -1 }
+                }
+              ]);
+
         }
         res.send(movies);
     } catch (error) {
